@@ -9,6 +9,7 @@ uploads/
 downloads/
 tests/tmp_uploads/
 logs/
+supabase/.temp/
 .local-token.txt
 current-public-url.txt
 PHONE_SETUP.txt

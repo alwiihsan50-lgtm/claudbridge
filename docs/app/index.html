@@ -2,251 +2,283 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0d171d">
-  <meta name="description" content="CloudBridge manager for clipboard and file transfer between iPhone and Windows.">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0c171d">
+  <meta name="description" content="CloudBridge clipboard and file manager for iPhone and Windows.">
   <link rel="manifest" href="./manifest.json">
   <link rel="icon" href="./icon.svg">
   <title>CloudBridge</title>
   <style>
     :root {
       color-scheme: dark;
-      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      --bg: #0d171d;
-      --panel: #121f27;
-      --panel-2: #172832;
-      --panel-3: #1c303c;
-      --line: #2b4350;
-      --line-strong: #3a5968;
-      --text: #f3f8fb;
-      --muted: #9fb5c1;
-      --faint: #6f8795;
+      font-family: "Segoe UI Variable", "Aptos", "Segoe UI", sans-serif;
+      --bg: #0c171d;
+      --panel: #101f27;
+      --panel-2: #152832;
+      --panel-3: #1a313c;
+      --line: #28434f;
+      --line-strong: #3b5d69;
+      --text: #f4f8fa;
+      --muted: #9db2bc;
+      --faint: #6e858f;
       --accent: #67d7c7;
-      --accent-strong: #8be5d9;
+      --accent-strong: #91e8dc;
       --accent-ink: #062b28;
       --danger: #f0a0a8;
-      --danger-line: #7b323f;
-      --shadow: 0 24px 70px rgb(2 9 12 / .42);
-      --radius: 14px;
+      --danger-bg: #321d23;
+      --warning: #f0ca79;
+      --radius: 8px;
+      --shadow: 0 24px 70px rgb(0 8 12 / .45);
     }
     * { box-sizing: border-box; }
-    html { min-height: 100%; background: var(--bg); }
+    html, body { margin: 0; height: 100%; background: var(--bg); }
     body {
-      margin: 0;
       height: 100dvh;
       overflow: hidden;
-      background:
-        radial-gradient(circle at 12% -10%, rgb(103 215 199 / .16), transparent 30rem),
-        radial-gradient(circle at 94% 8%, rgb(87 128 151 / .18), transparent 26rem),
-        linear-gradient(180deg, #0d171d 0%, #0a1217 100%);
       color: var(--text);
-      font-variant-numeric: tabular-nums;
-    }
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: .08;
       background-image:
-        linear-gradient(rgb(255 255 255 / .26) 1px, transparent 1px),
-        linear-gradient(90deg, rgb(255 255 255 / .18) 1px, transparent 1px);
-      background-size: 42px 42px;
-      mask-image: linear-gradient(to bottom, black, transparent 76%);
+        linear-gradient(rgb(255 255 255 / .018) 1px, transparent 1px),
+        linear-gradient(90deg, rgb(255 255 255 / .018) 1px, transparent 1px);
+      background-size: 52px 52px;
     }
+    button, input, textarea, select { font: inherit; }
+    button {
+      min-height: 38px;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      padding: 8px 13px;
+      color: var(--accent-ink);
+      background: var(--accent);
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 160ms ease, background 160ms ease, border-color 160ms ease, color 160ms ease;
+    }
+    button:hover { background: var(--accent-strong); }
+    button:active { transform: translateY(1px) scale(.985); }
+    button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+      outline: 2px solid var(--accent-strong);
+      outline-offset: 2px;
+    }
+    button:disabled { opacity: .45; cursor: default; transform: none; }
+    button.secondary, button.tertiary, .icon-button {
+      color: var(--text);
+      background: var(--panel-2);
+      border-color: var(--line);
+    }
+    button.secondary:hover, button.tertiary:hover, .icon-button:hover { background: var(--panel-3); border-color: var(--line-strong); }
+    button.tertiary { min-height: 34px; padding: 6px 10px; font-size: 13px; }
+    button.danger { color: #ffd9dd; background: var(--danger-bg); border-color: #743742; }
+    button.danger:hover { background: #45232b; }
+    .icon-button {
+      display: inline-grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      min-height: 34px;
+      padding: 0;
+      flex: 0 0 auto;
+    }
+    .icon-button svg, .button-icon svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .button-icon { display: inline-flex; align-items: center; gap: 7px; }
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 10px 12px;
+      color: var(--text);
+      background: #0e1c23;
+    }
+    textarea { min-height: 86px; resize: none; line-height: 1.45; }
+    label { color: var(--muted); font-size: 12px; font-weight: 650; }
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: clamp(22px, 3vw, 27px); line-height: 1; letter-spacing: 0; }
+    h2 { font-size: 17px; line-height: 1.2; }
+    h3 { font-size: 14px; line-height: 1.2; }
+    .hidden { display: none !important; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
     main {
+      width: min(1180px, 100%);
+      height: 100dvh;
+      margin: 0 auto;
+      padding: max(14px, env(safe-area-inset-top)) 16px max(10px, env(safe-area-inset-bottom));
       display: grid;
       grid-template-rows: auto minmax(0, 1fr) auto;
       gap: 10px;
-      width: min(100%, 760px);
-      height: 100dvh;
-      margin: 0 auto;
-      padding: max(10px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom));
     }
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 5;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 6px 0;
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-    }
-    h1 { margin: 0; font-size: 25px; line-height: 1; letter-spacing: 0; }
-    h2 { margin: 0; font-size: 15px; line-height: 1.2; letter-spacing: 0; }
-    p { margin: 0; color: var(--muted); line-height: 1.45; }
-    label { display: block; margin: 10px 0 6px; color: #dce9ef; font-size: 12px; font-weight: 750; }
-    input, textarea, button {
-      width: 100%;
-      box-sizing: border-box;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: #101d25;
-      color: var(--text);
-      font: inherit;
-    }
-    input, textarea {
-      padding: 11px 12px;
-      outline: none;
-      transition: border-color .18s ease, background .18s ease, box-shadow .18s ease;
-    }
-    input:focus, textarea:focus {
-      border-color: rgb(103 215 199 / .72);
-      background: #11232b;
-      box-shadow: 0 0 0 3px rgb(103 215 199 / .12);
-    }
-    textarea { min-height: 108px; resize: none; line-height: 1.4; }
-    button {
-      min-height: 42px;
-      margin-top: 8px;
-      padding: 10px 13px;
-      border: 0;
-      background: var(--accent);
-      color: var(--accent-ink);
-      font-weight: 850;
-      cursor: pointer;
-      transition: transform .16s ease, background .16s ease, border-color .16s ease, color .16s ease, opacity .16s ease;
-      touch-action: manipulation;
-    }
-    button:hover { background: var(--accent-strong); }
-    button:active { transform: translateY(1px) scale(.99); }
-    button:focus-visible { outline: 3px solid rgb(103 215 199 / .38); outline-offset: 2px; }
-    button.secondary { background: var(--panel-3); color: var(--text); border: 1px solid var(--line-strong); }
-    button.secondary:hover { background: #233b48; }
-    button.tertiary { width: auto; min-height: 36px; margin: 0; padding: 8px 10px; background: transparent; color: var(--muted); border: 1px solid var(--line); font-size: 13px; }
-    button.tertiary:hover { color: var(--text); border-color: var(--line-strong); background: rgb(255 255 255 / .035); }
-    button.subtle-danger { width: auto; min-height: 32px; margin: 0; padding: 7px 9px; background: transparent; color: var(--danger); border: 1px solid var(--danger-line); font-size: 12px; }
-    button.inline { width: auto; min-height: 34px; margin: 0; padding: 7px 10px; font-size: 13px; }
-    .actions { display: flex; flex-direction: column; gap: 7px; align-items: flex-end; }
-    .shell {
-      display: grid;
-      grid-template-rows: minmax(0, 1fr);
-      overflow: hidden;
-      min-height: 0;
-      border: 1px solid rgb(255 255 255 / .08);
-      border-radius: 18px;
-      background: linear-gradient(180deg, rgb(18 31 39 / .96), rgb(13 24 31 / .96));
-      box-shadow: var(--shadow);
-    }
-    #appPanel:not(.hidden) {
-      display: grid;
-      grid-template-rows: auto minmax(0, 1fr);
-      min-height: 0;
-      height: 100%;
-    }
-    .content-pane { min-height: 0; padding: 12px 12px 10px; overflow: auto; overscroll-behavior: contain; }
-    .sync-pane { display: grid; grid-template-rows: auto auto auto auto auto auto auto; overflow: hidden; }
-    .history-pane { display: grid; grid-template-rows: auto minmax(0, 1fr); overflow: auto; -webkit-overflow-scrolling: touch; }
-    .pair-card { padding: 12px; border-top: 1px solid var(--line); }
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .tabs {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      padding: 6px;
-      background: #0c171d;
-      border-bottom: 1px solid var(--line);
-    }
-    .tabs button {
-      min-height: 40px;
-      margin: 0;
-      background: transparent;
-      color: var(--muted);
-      border: 1px solid transparent;
-      font-size: 12px;
-      line-height: 1.15;
-      border-radius: 9px;
-    }
-    .tabs button.active {
-      background: var(--panel-3);
-      color: var(--text);
-      border-color: var(--line-strong);
-      box-shadow: inset 0 1px 0 rgb(255 255 255 / .05);
-    }
-    .toolbar {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 10px;
-    }
-    .toolbar .copy { min-width: 0; }
-    .toolbar p { margin-top: 4px; font-size: 12px; }
-    .list { display: grid; gap: 10px; min-height: 80px; }
-    .history-list { min-height: 0; overflow: auto; padding-right: 2px; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
-    .list-item {
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 12px;
-      background: rgb(17 31 39 / .86);
-      animation: itemIn .18s ease both;
-    }
-    .list-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: flex-start; gap: 10px; }
-    .preview { white-space: pre-wrap; word-break: break-word; color: var(--text); line-height: 1.38; }
-    .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; color: var(--muted); font-size: 12px; }
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      min-height: 22px;
-      padding: 3px 7px;
+    header { min-height: 38px; display: flex; align-items: center; justify-content: space-between; }
+    .pair-state {
+      padding: 6px 10px;
       border: 1px solid var(--line);
       border-radius: 999px;
       color: var(--muted);
-      background: rgb(255 255 255 / .025);
+      font-size: 12px;
     }
-    .chip.pinned { color: var(--accent-strong); border-color: rgb(103 215 199 / .28); background: rgb(103 215 199 / .07); }
-    .empty, .error-box {
-      padding: 18px 14px;
-      border: 1px dashed var(--line-strong);
-      border-radius: var(--radius);
-      color: var(--muted);
-      background: rgb(255 255 255 / .025);
-      line-height: 1.45;
-    }
-    .error-box { color: #ffc8cf; border-color: var(--danger-line); background: rgb(240 160 168 / .05); }
-    .skeleton { display: grid; gap: 10px; }
-    .skeleton-row {
-      min-height: 72px;
-      border-radius: var(--radius);
-      border: 1px solid var(--line);
-      background:
-        linear-gradient(90deg, transparent, rgb(255 255 255 / .045), transparent),
-        rgb(18 33 42 / .8);
-      background-size: 220% 100%;
-      animation: shimmer 1.2s ease-in-out infinite;
-    }
-    .danger-zone { display: flex; justify-content: flex-end; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--line); }
-    .pill { flex: 0 0 auto; border: 1px solid var(--line-strong); border-radius: 999px; padding: 6px 9px; color: var(--muted); font-size: 12px; background: rgb(17 31 39 / .82); }
-    .status {
-      padding: 9px 11px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      background: rgb(15 27 34 / .92);
-      color: #c7d7df;
-      min-height: 38px;
-      max-height: 54px;
+    .shell {
+      min-height: 0;
       overflow: hidden;
-      line-height: 1.35;
-      font-size: 13px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgb(12 25 32 / .91);
+      box-shadow: var(--shadow);
     }
-    .hidden { display: none; }
-    @keyframes shimmer { to { background-position: -220% 0; } }
-    @keyframes itemIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+    #appPanel { height: 100%; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr); }
+    .pair-card { width: min(430px, calc(100% - 28px)); margin: 28px auto; display: grid; gap: 10px; }
+    .tabs { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid var(--line); }
+    .tabs button {
+      min-height: 46px;
+      border: 0;
+      border-radius: 0;
+      color: var(--muted);
+      background: transparent;
+      position: relative;
+    }
+    .tabs button.active { color: var(--text); background: rgb(103 215 199 / .08); }
+    .tabs button.active::after { content: ""; position: absolute; left: 18%; right: 18%; bottom: 0; height: 2px; background: var(--accent); }
+    .content-pane { min-height: 0; overflow: hidden; }
+    .sync-pane {
+      width: min(620px, 100%);
+      margin: 0 auto;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px 10px;
+      overflow: auto;
+    }
+    .sync-pane label, .sync-pane textarea, .sync-pane .wide, .danger-zone { grid-column: 1 / -1; }
+    .sync-pane input[type=file] { min-width: 0; padding: 8px; }
+    .danger-zone { display: flex; justify-content: center; padding-top: 3px; }
+    .subtle-danger { min-height: 30px; padding: 5px 8px; color: var(--faint); background: transparent; border: 0; font-size: 11px; }
+    .subtle-danger:hover { color: var(--danger); background: transparent; }
+    .pane-toolbar {
+      min-height: 55px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+    .pane-toolbar .heading { min-width: 0; margin-right: auto; }
+    .pane-toolbar p { margin-top: 2px; color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+    .segmented { display: inline-grid; grid-auto-flow: column; padding: 3px; border: 1px solid var(--line); border-radius: 7px; background: #0d1a20; }
+    .segmented button { min-height: 30px; padding: 5px 10px; color: var(--muted); background: transparent; border: 0; font-size: 12px; }
+    .segmented button.active { color: var(--text); background: var(--panel-3); }
+    .clipboard-pane { height: 100%; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr); }
+    .clipboard-board { min-height: 0; display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); }
+    .clipboard-column { min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr); overflow: hidden; }
+    .clipboard-column + .clipboard-column { border-left: 1px solid var(--line); }
+    .section-title { padding: 10px 12px 7px; display: flex; align-items: center; justify-content: space-between; color: var(--muted); }
+    .section-title span { font-size: 11px; font-variant-numeric: tabular-nums; }
+    .scroll-list { min-height: 0; overflow: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+    .clip-item { padding: 11px 12px; border-top: 1px solid rgb(40 67 79 / .68); }
+    .clip-item:first-child { border-top-color: transparent; }
+    .clip-preview { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.4; font-size: 13px; }
+    .item-foot { margin-top: 8px; display: flex; align-items: center; gap: 6px; }
+    .meta { min-width: 0; margin-right: auto; color: var(--faint); font-size: 10px; font-variant-numeric: tabular-nums; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .file-pane { height: 100%; min-height: 0; display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; }
+    .file-toolbar { flex-wrap: wrap; }
+    .breadcrumb { min-width: 120px; flex: 1 1 260px; display: flex; align-items: center; gap: 3px; overflow: hidden; }
+    .crumb { min-height: 31px; padding: 5px 7px; color: var(--muted); background: transparent; border: 0; white-space: nowrap; font-size: 12px; }
+    .crumb:hover { color: var(--text); background: var(--panel-2); }
+    .crumb:last-child { color: var(--text); overflow: hidden; text-overflow: ellipsis; }
+    .crumb-sep { color: var(--faint); }
+    .search-wrap { flex: 1 1 210px; position: relative; }
+    .search-wrap input { height: 36px; padding-left: 35px; }
+    .search-wrap svg { position: absolute; left: 11px; top: 10px; width: 16px; height: 16px; stroke: var(--faint); fill: none; stroke-width: 1.8; }
+    .sort-select { width: auto; height: 36px; min-width: 108px; padding: 6px 30px 6px 9px; font-size: 12px; }
+    .storage-strip { min-height: 30px; display: grid; grid-template-columns: auto minmax(80px, 180px) auto; align-items: center; gap: 8px; padding: 5px 12px; border-bottom: 1px solid var(--line); color: var(--faint); font-size: 10px; }
+    .storage-track { height: 4px; overflow: hidden; border-radius: 4px; background: var(--panel-3); }
+    .storage-fill { width: 0; height: 100%; background: var(--accent); transition: width 240ms ease; }
+    .storage-fill.warn { background: var(--warning); }
+    .storage-fill.danger { background: var(--danger); }
+    .file-workspace { min-height: 0; display: grid; grid-template-columns: 220px minmax(0, 1fr); }
+    .folder-sidebar { min-height: 0; overflow: auto; padding: 7px; border-right: 1px solid var(--line); }
+    .tree-item {
+      width: 100%; min-height: 33px; display: flex; align-items: center; gap: 7px;
+      padding: 6px 8px; color: var(--muted); background: transparent; border: 0; text-align: left; font-size: 12px; font-weight: 600;
+    }
+    .tree-item:hover { color: var(--text); background: var(--panel-2); }
+    .tree-item.active { color: var(--accent-strong); background: rgb(103 215 199 / .08); }
+    .tree-item svg { width: 16px; height: 16px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-width: 1.7; }
+    .tree-indent { margin-left: 15px; }
+    .browser-area { min-height: 0; overflow: auto; }
+    .browser-head {
+      position: sticky; top: 0; z-index: 2; min-height: 35px; display: grid;
+      grid-template-columns: minmax(0, 1fr) 90px 105px 124px; align-items: center;
+      padding: 0 10px; color: var(--faint); background: rgb(12 25 32 / .96); border-bottom: 1px solid var(--line); font-size: 10px;
+    }
+    .browser-row {
+      min-height: 51px; display: grid; grid-template-columns: minmax(0, 1fr) 90px 105px 124px;
+      align-items: center; gap: 0; padding: 6px 10px; border-bottom: 1px solid rgb(40 67 79 / .58); transition: background 150ms ease;
+    }
+    .browser-row:hover { background: rgb(103 215 199 / .045); }
+    .browser-row.selected { background: rgb(103 215 199 / .09); }
+    .file-name { min-width: 0; display: flex; align-items: center; gap: 9px; }
+    .file-name input { width: 16px; height: 16px; accent-color: var(--accent); flex: 0 0 auto; }
+    .file-name .type-icon { width: 20px; height: 20px; flex: 0 0 auto; fill: none; stroke: var(--accent); stroke-width: 1.6; }
+    .file-name-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 600; }
+    .folder-open { color: var(--text); background: transparent; border: 0; padding: 0; min-height: 0; min-width: 0; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .folder-open:hover { color: var(--accent-strong); background: transparent; }
+    .row-meta { color: var(--faint); font-size: 10px; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .row-actions { display: flex; justify-content: flex-end; gap: 4px; }
+    .row-actions .icon-button { width: 29px; height: 29px; min-height: 29px; }
+    .selection-bar {
+      min-height: 48px; display: flex; align-items: center; gap: 7px; padding: 7px 10px;
+      border-top: 1px solid var(--line); background: var(--panel); overflow-x: auto;
+    }
+    .selection-bar strong { margin-right: auto; white-space: nowrap; font-size: 12px; }
+    .empty-state { min-height: 180px; display: grid; place-content: center; gap: 6px; padding: 24px; color: var(--muted); text-align: center; }
+    .empty-state svg { width: 30px; height: 30px; margin: 0 auto; stroke: var(--faint); fill: none; stroke-width: 1.5; }
+    .empty-state strong { color: var(--text); font-size: 13px; }
+    .empty-state span { font-size: 11px; }
+    .status { min-height: 28px; padding: 6px 10px; overflow: hidden; border: 1px solid var(--line); border-radius: 7px; color: var(--muted); background: rgb(16 31 39 / .85); font-size: 11px; white-space: nowrap; text-overflow: ellipsis; }
+    .skeleton { padding: 10px; display: grid; gap: 8px; }
+    .skeleton-row { height: 48px; border-radius: 6px; background: linear-gradient(90deg, var(--panel) 25%, var(--panel-2) 45%, var(--panel) 65%); background-size: 240% 100%; animation: shimmer 1.2s infinite linear; }
+    @keyframes shimmer { to { background-position: -240% 0; } }
+    dialog {
+      width: min(440px, calc(100% - 24px)); border: 1px solid var(--line-strong); border-radius: 10px;
+      padding: 0; color: var(--text); background: var(--panel); box-shadow: var(--shadow);
+    }
+    dialog::backdrop { background: rgb(0 7 10 / .72); backdrop-filter: blur(4px); }
+    .dialog-body { padding: 16px; display: grid; gap: 10px; }
+    .dialog-copy { color: var(--muted); font-size: 12px; line-height: 1.45; }
+    .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; padding: 10px 16px; border-top: 1px solid var(--line); }
+    .mobile-only { display: none; }
+    @media (max-width: 760px) {
+      main { width: 100%; padding: max(8px, env(safe-area-inset-top)) 8px max(7px, env(safe-area-inset-bottom)); gap: 7px; }
+      header { min-height: 34px; padding: 0 3px; }
+      h1 { font-size: 22px; }
+      .shell { border-radius: 8px; }
+      .tabs button { min-height: 42px; font-size: 12px; }
+      .sync-pane { padding: 10px; gap: 8px; }
+      .pane-toolbar { min-height: 48px; padding: 7px 9px; }
+      .clipboard-board { display: block; height: 100%; }
+      .clipboard-column { height: 100%; }
+      .clipboard-column + .clipboard-column { border-left: 0; }
+      .clipboard-board[data-mobile-view="recent"] .pinned-column,
+      .clipboard-board[data-mobile-view="pinned"] .recent-column { display: none; }
+      .mobile-only { display: inline-grid; }
+      .file-pane { grid-template-rows: auto auto minmax(0, 1fr) auto; }
+      .file-toolbar { gap: 6px; padding: 7px 8px; }
+      .breadcrumb { order: 1; flex-basis: calc(100% - 88px); }
+      .file-toolbar > .icon-button { order: 1; }
+      .search-wrap { order: 2; flex-basis: calc(100% - 116px); }
+      .sort-select { order: 2; width: 110px; }
+      .storage-strip { padding-inline: 9px; grid-template-columns: auto minmax(60px, 1fr) auto; }
+      .file-workspace { display: block; }
+      .folder-sidebar { display: none; }
+      .browser-area { height: 100%; }
+      .browser-head { display: none; }
+      .browser-row { min-height: 60px; grid-template-columns: minmax(0, 1fr) auto; padding: 7px 8px; }
+      .browser-row > .row-meta { display: none; }
+      .row-actions { gap: 3px; }
+      .row-actions .icon-button { width: 31px; height: 31px; }
+      .selection-bar { padding-inline: 8px; }
+      .selection-bar strong { position: sticky; left: 0; padding-right: 5px; background: var(--panel); }
+    }
     @media (max-width: 420px) {
-      main { padding-inline: 8px; }
-      .tabs button { font-size: 11px; padding-inline: 7px; }
-      .content-pane, .pair-card { padding-inline: 10px; }
-    }
-    @media (max-height: 760px) {
-      textarea { min-height: 86px; }
-      button { min-height: 38px; padding-block: 8px; }
-      label { margin-top: 8px; }
-      .tabs button { min-height: 36px; }
-      .content-pane { padding-top: 9px; }
-      .status { min-height: 34px; padding-block: 8px; }
+      .sync-pane { grid-template-columns: 1fr 1fr; }
+      .file-name-text { font-size: 12px; }
+      .row-actions .optional-action { display: none; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
@@ -257,14 +289,14 @@
 <main>
   <header>
     <h1>CloudBridge</h1>
-    <div id="pairState" class="pill">Checking</div>
+    <div id="pairState" class="pair-state">Checking</div>
   </header>
 
   <div class="shell">
     <section id="pairPanel" class="pair-card hidden">
       <label for="pairCode">Pairing code</label>
       <input id="pairCode" autocomplete="one-time-code" placeholder="Pairing code">
-      <button id="pairBtn">Pair iPhone</button>
+      <button id="pairBtn">Pair device</button>
     </section>
 
     <section id="appPanel" class="hidden">
@@ -274,398 +306,670 @@
         <button id="filesTab" aria-selected="false">Files</button>
       </nav>
 
-      <div id="syncView" class="content-pane sync-pane">
+      <section id="syncView" class="content-pane sync-pane">
         <label for="content">Text</label>
         <textarea id="content" placeholder="Paste text here."></textarea>
-        <div class="row">
-          <button id="pasteBtn" class="secondary">Paste</button>
-          <button id="copyBtn" class="secondary">Copy</button>
-        </div>
-        <button id="pushBtn">Push</button>
-        <button id="pullBtn" class="secondary">Pull</button>
+        <button id="pasteBtn" class="secondary">Paste</button>
+        <button id="copyBtn" class="secondary">Copy</button>
+        <button id="pushBtn" class="wide">Push</button>
+        <button id="pullBtn" class="secondary wide">Pull</button>
         <label for="file">File</label>
         <input id="file" type="file">
-        <button id="fileBtn">Send File</button>
-        <div class="danger-zone">
-          <button id="resetBtn" class="subtle-danger">Forget Pairing</button>
-        </div>
-      </div>
+        <button id="fileBtn">Send file</button>
+        <div class="danger-zone"><button id="resetBtn" class="subtle-danger">Forget pairing</button></div>
+      </section>
 
-      <div id="clipboardView" class="content-pane history-pane hidden">
-        <div class="toolbar">
-          <div class="copy">
-            <h2>Clipboard</h2>
-            <p id="clipboardSummary">Cached.</p>
+      <section id="clipboardView" class="content-pane clipboard-pane hidden">
+        <div class="pane-toolbar">
+          <div class="heading"><h2>Clipboard</h2><p id="clipboardSummary">Loading</p></div>
+          <div id="clipboardMobileSwitch" class="segmented mobile-only" aria-label="Clipboard view">
+            <button data-clip-view="pinned" class="active">Pinned</button>
+            <button data-clip-view="recent">Recent</button>
           </div>
-          <button id="refreshClipboardBtn" class="tertiary">Refresh</button>
+          <button id="refreshClipboardBtn" class="icon-button" title="Refresh" aria-label="Refresh clipboard"></button>
         </div>
-        <div id="clipboardList" class="list history-list"></div>
-      </div>
+        <div id="clipboardBoard" class="clipboard-board" data-mobile-view="pinned">
+          <section class="clipboard-column pinned-column">
+            <div class="section-title"><h3>Pinned</h3><span id="pinnedCount">0</span></div>
+            <div id="pinnedClipboardList" class="scroll-list"></div>
+          </section>
+          <section class="clipboard-column recent-column">
+            <div class="section-title"><h3>Recent</h3><span id="recentCount">0</span></div>
+            <div id="recentClipboardList" class="scroll-list"></div>
+          </section>
+        </div>
+      </section>
 
-      <div id="filesView" class="content-pane history-pane hidden">
-        <div class="toolbar">
-          <div class="copy">
-            <h2>Files</h2>
-            <p id="filesSummary">Pinned stays.</p>
+      <section id="filesView" class="content-pane file-pane hidden">
+        <div class="pane-toolbar file-toolbar">
+          <nav id="breadcrumb" class="breadcrumb" aria-label="Folder path"></nav>
+          <div class="search-wrap">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+            <input id="fileSearch" type="search" placeholder="Search files" aria-label="Search files">
           </div>
-          <button id="refreshFilesBtn" class="tertiary">Refresh</button>
+          <select id="fileSort" class="sort-select" aria-label="Sort files">
+            <option value="newest">Newest</option><option value="oldest">Oldest</option><option value="name">Name</option><option value="size">Size</option>
+          </select>
+          <button id="newFolderBtn" class="icon-button" title="New folder" aria-label="New folder"></button>
+          <button id="uploadFolderBtn" class="icon-button" title="Upload" aria-label="Upload file"></button>
+          <input id="managerFileInput" type="file" class="sr-only">
+          <button id="refreshFilesBtn" class="icon-button" title="Refresh" aria-label="Refresh files"></button>
         </div>
-        <div id="filesList" class="list history-list"></div>
-      </div>
+        <div class="storage-strip">
+          <span>Storage</span><div class="storage-track"><div id="storageFill" class="storage-fill"></div></div><span id="storageText">--</span>
+        </div>
+        <div class="file-workspace">
+          <aside id="folderTree" class="folder-sidebar" aria-label="Folders"></aside>
+          <section id="browserArea" class="browser-area">
+            <div class="browser-head"><span>Name</span><span>Size</span><span>Status</span><span></span></div>
+            <div id="browserList"></div>
+          </section>
+        </div>
+        <div id="selectionBar" class="selection-bar hidden"></div>
+      </section>
     </section>
   </div>
 
-  <div id="status" class="status">Ready.</div>
+  <div id="status" class="status" role="status">Ready.</div>
 </main>
+
+<dialog id="editorDialog">
+  <form id="editorForm">
+    <div class="dialog-body">
+      <h2 id="editorTitle">Edit</h2>
+      <label id="editorLabel" for="editorInput">Name</label>
+      <input id="editorInput" autocomplete="off">
+      <select id="editorSelect" class="hidden"></select>
+    </div>
+    <div class="dialog-actions"><button type="button" id="editorCancel" class="secondary">Cancel</button><button type="submit" id="editorSave">Save</button></div>
+  </form>
+</dialog>
+
+<dialog id="confirmDialog">
+  <div class="dialog-body"><h2 id="confirmTitle">Confirm</h2><p id="confirmCopy" class="dialog-copy"></p></div>
+  <div class="dialog-actions"><button id="confirmCancel" class="secondary">Cancel</button><button id="confirmAccept" class="danger">Delete</button></div>
+</dialog>
+
 <script>
 const API_BASE = "https://ajlkfzgpheegmwsnspxw.supabase.co/functions/v1/cloudbridge";
 const SUPABASE_BASE = "https://ajlkfzgpheegmwsnspxw.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_c4VLFI_5vVD2FokNBuX1iw_44NApC27";
 const REALTIME_TOPIC = "cloudbridge";
-const HISTORY_STALE_MS = 60000;
+const CACHE_MS = 60000;
+const icons = {
+  refresh: '<svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"></path><path d="M20 4v7h-7"></path></svg>',
+  folderPlus: '<svg viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v11H3z"></path><path d="M12 11v5M9.5 13.5h5"></path></svg>',
+  upload: '<svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5"></path><path d="M4 15v5h16v-5"></path></svg>',
+  folder: '<svg class="type-icon" viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v11H3z"></path></svg>',
+  inbox: '<svg viewBox="0 0 24 24"><path d="M4 5h16l2 9v5H2v-5z"></path><path d="M2 14h6l2 3h4l2-3h6"></path></svg>',
+  trash: '<svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3m3 0-1 13H7L6 7"></path></svg>',
+  file: '<svg class="type-icon" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"></path><path d="M14 3v5h5"></path></svg>',
+  copy: '<svg viewBox="0 0 24 24"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"></path></svg>',
+  pin: '<svg viewBox="0 0 24 24"><path d="m14 4 6 6-3 1-4 4-1 5-2-2-4 4-1-1 4-4-2-2 5-1 4-4z"></path></svg>',
+  download: '<svg viewBox="0 0 24 24"><path d="M12 3v13m0 0 5-5m-5 5-5-5"></path><path d="M4 20h16"></path></svg>',
+  edit: '<svg viewBox="0 0 24 24"><path d="m4 16-1 5 5-1L19 9l-4-4z"></path><path d="m13.5 6.5 4 4"></path></svg>',
+  move: '<svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"></path><path d="m8 7 4-4 4 4M8 17l4 4 4-4M7 8l-4 4 4 4M17 8l4 4-4 4"></path></svg>',
+  restore: '<svg viewBox="0 0 24 24"><path d="M4 8v6h6"></path><path d="M5.5 15A8 8 0 1 0 7 6.5L4 9"></path></svg>',
+};
+
 const params = new URLSearchParams(location.search);
 const requestedDeviceId = params.get("device_id");
-if (params.get("auto_claim") === "1" && requestedDeviceId) {
-  localStorage.setItem("cloudbridge_device_id", requestedDeviceId);
-}
+if (params.get("auto_claim") === "1" && requestedDeviceId) localStorage.setItem("cloudbridge_device_id", requestedDeviceId);
 const deviceId = localStorage.getItem("cloudbridge_device_id") || requestedDeviceId || ("ios-" + Math.random().toString(36).slice(2));
 localStorage.setItem("cloudbridge_device_id", deviceId);
-const pairCodeInput = document.getElementById("pairCode");
+
+const $ = (id) => document.getElementById(id);
+const pairCodeInput = $("pairCode");
 if (params.get("code")) pairCodeInput.value = params.get("code");
-const statusBox = document.getElementById("status");
-const pairState = document.getElementById("pairState");
-const pairPanel = document.getElementById("pairPanel");
-const appPanel = document.getElementById("appPanel");
-const content = document.getElementById("content");
-const views = {
-  sync: document.getElementById("syncView"),
-  clipboard: document.getElementById("clipboardView"),
-  files: document.getElementById("filesView")
+const views = { sync: $("syncView"), clipboard: $("clipboardView"), files: $("filesView") };
+const tabButtons = { sync: $("syncTab"), clipboard: $("clipTab"), files: $("filesTab") };
+const clipboardState = { pinned: null, recent: null, loadedAt: 0, loading: false };
+const fileState = {
+  folders: [], location: "root", result: null, loadedAt: 0, cache: new Map(), selected: new Set(), sort: "newest",
+  search: "", loading: false, storage: null, activeView: "browse"
 };
-const tabButtons = {
-  sync: document.getElementById("syncTab"),
-  clipboard: document.getElementById("clipTab"),
-  files: document.getElementById("filesTab")
-};
-const historyState = {
-  clipboard: { items: null, loading: false, loadedAt: 0, error: "" },
-  files: { items: null, loading: false, loadedAt: 0, error: "" }
-};
+let activeTab = "sync";
+let editorSubmit = null;
+let confirmSubmit = null;
+
 function token() { return localStorage.getItem("cloudbridge_token") || ""; }
-function status(message) { statusBox.textContent = message; }
-function headers(extra = {}) { return { "Authorization": "Bearer " + token(), ...extra }; }
-function isStale(name) { return Date.now() - historyState[name].loadedAt > HISTORY_STALE_MS; }
-function setTabA11y(activeName) {
-  Object.keys(tabButtons).forEach((key) => tabButtons[key].setAttribute("aria-selected", key === activeName ? "true" : "false"));
-}
-function showView(name) {
-  Object.keys(views).forEach((key) => {
-    views[key].classList.toggle("hidden", key !== name);
-    tabButtons[key].classList.toggle("active", key === name);
-  });
-  setTabA11y(name);
-  if (name === "clipboard") ensureHistory("clipboard");
-  if (name === "files") ensureHistory("files");
-}
-function fmtTime(value) {
-  if (!value) return "";
-  try { return new Date(value).toLocaleString(); } catch { return value; }
-}
-function shortText(value, max = 180) {
-  const text = String(value || "");
-  return text.length > max ? text.slice(0, max) + "..." : text;
-}
-function fmtSize(bytes) {
+function authHeaders(extra = {}) { return { Authorization: "Bearer " + token(), ...extra }; }
+function setStatus(message) { $("status").textContent = message; }
+function formatTime(value) { try { return new Date(value).toLocaleString([], { dateStyle: "medium", timeStyle: "short" }); } catch { return value || ""; } }
+function formatSize(bytes) {
   const size = Number(bytes || 0);
-  if (size >= 1024 * 1024) return (size / 1024 / 1024).toFixed(1) + " MB";
+  if (size >= 1024 ** 3) return (size / 1024 ** 3).toFixed(1) + " GB";
+  if (size >= 1024 ** 2) return (size / 1024 ** 2).toFixed(1) + " MB";
   if (size >= 1024) return (size / 1024).toFixed(1) + " KB";
   return size + " B";
 }
-function skeletonRows() {
-  return "<div class='skeleton'><div class='skeleton-row'></div><div class='skeleton-row'></div><div class='skeleton-row'></div></div>";
+function shortText(value, max = 260) { const text = String(value || ""); return text.length > max ? text.slice(0, max) + "…" : text; }
+function iconButton(name, title, className = "") { return `<button class="icon-button ${className}" title="${title}" aria-label="${title}">${icons[name]}</button>`; }
+function emptyState(name, title, copy) { return `<div class="empty-state">${icons[name]}<strong>${title}</strong><span>${copy}</span></div>`; }
+function skeletonRows(count = 5) { return `<div class="skeleton">${"<div class='skeleton-row'></div>".repeat(count)}</div>`; }
+function escapeHtml(value) { const el = document.createElement("span"); el.textContent = String(value ?? ""); return el.innerHTML; }
+
+async function apiJson(path, options = {}) {
+  const response = await fetch(API_BASE + path, { ...options, headers: authHeaders(options.headers || {}) });
+  if (!response.ok) {
+    let detail = "Request failed";
+    try { detail = (await response.json()).detail || detail; } catch {}
+    throw new Error(detail);
+  }
+  return response.json();
 }
-function chip(text, className = "") {
-  return "<span class='chip " + className + "'>" + text + "</span>";
-}
-async function notifyRealtime(kind, item) {
+
+async function notifyRealtime(kind, item = {}) {
   try {
     await fetch(SUPABASE_BASE + "/realtime/v1/api/broadcast", {
-      method: "POST",
-      headers: { "apikey": SUPABASE_PUBLISHABLE_KEY, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        messages: [{
-          topic: REALTIME_TOPIC,
-          event: "cloudbridge_change",
-          payload: {
-            kind,
-            id: item && item.id,
-            version: item && item.version,
-            source: item && item.source,
-            device_id: item && item.device_id,
-            filename: item && item.filename
-          }
-        }]
-      })
+      method: "POST", headers: { apikey: SUPABASE_PUBLISHABLE_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ messages: [{ topic: REALTIME_TOPIC, event: "cloudbridge_change", payload: { kind, device_id: deviceId, ...item } }] })
     });
   } catch {}
 }
-function setPaired(isPaired) {
-  pairState.textContent = isPaired ? "Paired" : "Not paired";
-  pairPanel.classList.toggle("hidden", isPaired);
-  appPanel.classList.toggle("hidden", !isPaired);
+
+function setPaired(paired) {
+  $("pairState").textContent = paired ? "Paired" : "Not paired";
+  $("pairPanel").classList.toggle("hidden", paired);
+  $("appPanel").classList.toggle("hidden", !paired);
 }
+
 async function checkPairing() {
-  if (!token()) { setPaired(false); return; }
-  const response = await fetch(API_BASE + "/api/me", { headers: headers() });
+  if (!token()) return setPaired(false);
+  const response = await fetch(API_BASE + "/api/me", { headers: authHeaders() });
   setPaired(response.ok);
   if (!response.ok) localStorage.removeItem("cloudbridge_token");
 }
-async function apiJson(path, options = {}) {
-  const response = await fetch(API_BASE + path, { ...options, headers: headers(options.headers || {}) });
-  if (!response.ok) throw new Error(await response.text());
-  return response.json();
-}
+
 async function claimPairing(code, label = "iPhone", platform = "ios") {
   const response = await fetch(API_BASE + "/api/pairing/claim", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ code, device_id: deviceId, label, platform })
   });
-  if (!response.ok) throw new Error(await response.text());
+  if (!response.ok) throw new Error((await response.json()).detail || "Pairing failed");
   const data = await response.json();
   localStorage.setItem("cloudbridge_token", data.token);
   setPaired(true);
   return data;
 }
+
 async function autoClaimIfRequested() {
   if (params.get("auto_claim") !== "1" || !params.get("code")) return false;
-  status("Pairing...");
+  setStatus("Pairing…");
   try {
     await claimPairing(params.get("code"), params.get("label") || "Windows Manager", params.get("platform") || "windows-web");
     history.replaceState(null, "", location.pathname);
-    status("Paired.");
-  } catch (err) {
-    localStorage.removeItem("cloudbridge_token");
-    setPaired(false);
-    status("Pairing failed: " + err.message);
+    setStatus("Paired.");
+  } catch (error) {
+    localStorage.removeItem("cloudbridge_token"); setPaired(false); setStatus(error.message);
   }
   return true;
 }
-async function pinClipboard(id, pinned) {
-  await apiJson("/api/clipboard/" + encodeURIComponent(id) + "/" + (pinned ? "unpin" : "pin"), { method: "POST" });
-  await loadClipboardHistory({ force: true, silent: true });
-  status(pinned ? "Clipboard unpinned." : "Clipboard pinned.");
+
+function showView(name) {
+  activeTab = name;
+  Object.keys(views).forEach((key) => {
+    views[key].classList.toggle("hidden", key !== name);
+    tabButtons[key].classList.toggle("active", key === name);
+    tabButtons[key].setAttribute("aria-selected", key === name ? "true" : "false");
+  });
+  if (name === "clipboard") loadClipboard();
+  if (name === "files") loadFileManager();
 }
-async function pinFile(id, pinned) {
-  await apiJson("/api/files/" + encodeURIComponent(id) + "/" + (pinned ? "unpin" : "pin"), { method: "POST" });
-  await loadFilesHistory({ force: true, silent: true });
-  status(pinned ? "File unpinned." : "File pinned.");
-}
-async function downloadFile(id, filename) {
-  const response = await fetch(API_BASE + "/api/files/" + encodeURIComponent(id) + "/download", { headers: headers() });
-  if (!response.ok) throw new Error(await response.text());
-  const blob = await response.blob();
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename || "cloudbridge-file";
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 30000);
-  status("Download started.");
-}
-function renderClipboardHistory() {
-  const list = document.getElementById("clipboardList");
-  const summary = document.getElementById("clipboardSummary");
-  const state = historyState.clipboard;
-  if (state.loading && !state.items) { list.innerHTML = skeletonRows(); return; }
-  if (state.error && !state.items) { list.innerHTML = "<div class='error-box'>Failed to load clipboard history.</div>"; return; }
-  const items = state.items || [];
-  const pinnedCount = items.filter((item) => item.pinned).length;
-  summary.textContent = items.length ? `${items.length} items, ${pinnedCount} pinned.` : "Cached.";
-  if (!items.length) {
-    list.innerHTML = "<div class='empty'>No clipboard.</div>";
+
+function renderClipboardList(target, items, pinned) {
+  const list = $(target);
+  if (!items?.length) {
+    list.innerHTML = emptyState("copy", pinned ? "No pinned text" : "No recent text", pinned ? "Pin text to keep it here." : "Copied text appears here.");
     return;
   }
   list.innerHTML = "";
   items.forEach((item) => {
     const row = document.createElement("article");
-    row.className = "list-item";
-    row.innerHTML = "<div class='list-head'><div><div class='preview'></div><div class='meta'></div></div><button class='inline'></button></div>";
-    row.querySelector(".preview").textContent = shortText(item.content);
-    row.querySelector(".meta").innerHTML =
-      (item.pinned ? chip("Pinned", "pinned") : "") +
-      chip(item.source || "unknown") +
-      chip(fmtTime(item.created_at));
-    const button = row.querySelector("button");
-    button.textContent = item.pinned ? "Unpin" : "Pin";
-    button.onclick = () => pinClipboard(item.id, item.pinned);
+    row.className = "clip-item";
+    row.innerHTML = `<div class="clip-preview"></div><div class="item-foot"><span class="meta"></span>${iconButton("copy", "Copy")}${iconButton("pin", pinned ? "Unpin" : "Pin")}</div>`;
+    row.querySelector(".clip-preview").textContent = shortText(item.content);
+    row.querySelector(".meta").textContent = `${item.source || "unknown"} · ${formatTime(item.created_at)}`;
+    const buttons = row.querySelectorAll("button");
+    buttons[0].onclick = async () => {
+      try { await navigator.clipboard.writeText(item.content); setStatus("Copied."); }
+      catch { setStatus("Copy was blocked by the browser."); }
+    };
+    buttons[1].onclick = () => toggleClipboardPin(item, pinned);
     list.appendChild(row);
   });
 }
-function renderFilesHistory() {
-  const list = document.getElementById("filesList");
-  const summary = document.getElementById("filesSummary");
-  const state = historyState.files;
-  if (state.loading && !state.items) { list.innerHTML = skeletonRows(); return; }
-  if (state.error && !state.items) { list.innerHTML = "<div class='error-box'>Failed to load files history.</div>"; return; }
-  const items = state.items || [];
-  const pinnedCount = items.filter((item) => item.pinned).length;
-  summary.textContent = items.length ? `${items.length} files, ${pinnedCount} pinned.` : "Pinned stays.";
-  if (!items.length) {
-    list.innerHTML = "<div class='empty'>No files.</div>";
-    return;
+
+function renderClipboard() {
+  const pinned = clipboardState.pinned || [];
+  const recent = clipboardState.recent || [];
+  $("pinnedCount").textContent = pinned.length;
+  $("recentCount").textContent = recent.length;
+  $("clipboardSummary").textContent = `${pinned.length} pinned · ${recent.length} recent`;
+  renderClipboardList("pinnedClipboardList", pinned, true);
+  renderClipboardList("recentClipboardList", recent, false);
+}
+
+async function loadClipboard(force = false) {
+  if (clipboardState.loading) return;
+  if (!force && clipboardState.pinned && Date.now() - clipboardState.loadedAt < CACHE_MS) return renderClipboard();
+  clipboardState.loading = true;
+  if (!clipboardState.pinned) {
+    $("pinnedClipboardList").innerHTML = skeletonRows(3);
+    $("recentClipboardList").innerHTML = skeletonRows(5);
   }
-  list.innerHTML = "";
-  items.forEach((item) => {
-    const row = document.createElement("article");
-    row.className = "list-item";
-    row.innerHTML = "<div class='list-head'><div><div class='preview'></div><div class='meta'></div></div><div class='actions'><button class='inline download-button'></button><button class='inline pin-button'></button></div></div>";
-    row.querySelector(".preview").textContent = item.filename;
-    row.querySelector(".meta").innerHTML =
-      (item.pinned ? chip("Pinned", "pinned") : "") +
-      chip(item.status || "unknown") +
-      chip(fmtSize(item.size)) +
-      chip(fmtTime(item.uploaded_at));
-    const downloadButton = row.querySelector(".download-button");
-    downloadButton.textContent = "Download";
-    downloadButton.onclick = () => downloadFile(item.id, item.filename).catch((err) => status("Download failed: " + err.message));
-    const pinButton = row.querySelector(".pin-button");
-    pinButton.textContent = item.pinned ? "Unpin" : "Pin";
-    pinButton.onclick = () => pinFile(item.id, item.pinned);
-    list.appendChild(row);
+  try {
+    const [pinned, recent] = await Promise.all([
+      apiJson("/api/clipboard/history?pinned=true&limit=100"), apiJson("/api/clipboard/history?pinned=false&limit=50")
+    ]);
+    clipboardState.pinned = pinned.items || [];
+    clipboardState.recent = recent.items || [];
+    clipboardState.loadedAt = Date.now();
+    renderClipboard();
+  } catch (error) { setStatus("Clipboard: " + error.message); }
+  finally { clipboardState.loading = false; }
+}
+
+async function toggleClipboardPin(item, pinned) {
+  try {
+    await apiJson(`/api/clipboard/${encodeURIComponent(item.id)}/${pinned ? "unpin" : "pin"}`, { method: "POST" });
+    clipboardState.loadedAt = 0;
+    await loadClipboard(true);
+    notifyRealtime("manager", { entity: "clipboard" });
+    setStatus(pinned ? "Unpinned." : "Pinned.");
+  } catch (error) { setStatus(error.message); }
+}
+
+function folderById(id) { return fileState.folders.find((folder) => folder.id === id); }
+function folderChildren(parentId) { return fileState.folders.filter((folder) => (folder.parent_id || null) === (parentId || null)); }
+function folderPath(id) {
+  const result = [];
+  const seen = new Set();
+  let folder = folderById(id);
+  while (folder && !seen.has(folder.id)) { seen.add(folder.id); result.unshift(folder); folder = folder.parent_id ? folderById(folder.parent_id) : null; }
+  return result;
+}
+function folderDescendantIds(id) {
+  const ids = new Set([id]); let changed = true;
+  while (changed) { changed = false; fileState.folders.forEach((folder) => { if (folder.parent_id && ids.has(folder.parent_id) && !ids.has(folder.id)) { ids.add(folder.id); changed = true; } }); }
+  return ids;
+}
+
+function renderTreeLevel(parentId = null, depth = 0) {
+  return folderChildren(parentId).map((folder) => {
+    const active = fileState.location === folder.id ? " active" : "";
+    return `<div class="${depth ? "tree-indent" : ""}"><button class="tree-item${active}" data-location="${folder.id}">${icons.folder}<span>${escapeHtml(folder.name)}</span></button>${renderTreeLevel(folder.id, depth + 1)}</div>`;
+  }).join("");
+}
+
+function renderFolderTree() {
+  const tree = $("folderTree");
+  tree.innerHTML = `<button class="tree-item ${fileState.location === "root" ? "active" : ""}" data-location="root">${icons.folder}<span>CloudBridge</span></button>
+    <button class="tree-item ${fileState.location === "inbox" ? "active" : ""}" data-location="inbox">${icons.inbox}<span>Inbox</span></button>
+    ${renderTreeLevel()}<button class="tree-item ${fileState.location === "trash" ? "active" : ""}" data-location="trash">${icons.trash}<span>Trash</span></button>`;
+  tree.querySelectorAll("[data-location]").forEach((button) => button.onclick = () => navigateFiles(button.dataset.location));
+}
+
+function renderBreadcrumb() {
+  const crumb = $("breadcrumb");
+  const parts = [{ id: "root", name: "CloudBridge" }];
+  if (fileState.location === "inbox") parts.push({ id: "inbox", name: "Inbox" });
+  else if (fileState.location === "trash") parts.push({ id: "trash", name: "Trash" });
+  else if (fileState.location !== "root") parts.push(...folderPath(fileState.location).map((folder) => ({ id: folder.id, name: folder.name })));
+  if (fileState.activeView === "search") parts.push({ id: "search", name: "Search" });
+  crumb.innerHTML = parts.map((part, index) => `${index ? '<span class="crumb-sep">/</span>' : ""}<button class="crumb" data-location="${part.id}" ${part.id === "search" ? "disabled" : ""}>${escapeHtml(part.name)}</button>`).join("");
+  crumb.querySelectorAll("button:not([disabled])").forEach((button) => button.onclick = () => navigateFiles(button.dataset.location));
+}
+
+function fileRow(file, trashMode = false) {
+  const selected = fileState.selected.has(file.id);
+  const actions = trashMode
+    ? `${iconButton("restore", "Restore")}${iconButton("trash", "Delete permanently", "danger")}`
+    : `${iconButton("download", "Download")}${iconButton("pin", file.pinned ? "Unpin" : "Pin", "optional-action")}${iconButton("edit", "Rename", "optional-action")}${iconButton("trash", "Move to Trash", "danger")}`;
+  return `<article class="browser-row ${selected ? "selected" : ""}" data-file-id="${file.id}">
+    <div class="file-name"><input type="checkbox" ${selected ? "checked" : ""} aria-label="Select ${escapeHtml(file.filename)}">${icons.file}<span class="file-name-text">${escapeHtml(file.filename)}</span></div>
+    <span class="row-meta">${formatSize(file.size)}</span><span class="row-meta">${trashMode ? "Trash" : escapeHtml(file.status || "")}</span><div class="row-actions">${actions}</div>
+  </article>`;
+}
+
+function folderRow(folder, trashMode = false, isInbox = false) {
+  const actions = trashMode
+    ? `${iconButton("restore", "Restore")}${iconButton("trash", "Delete permanently", "danger")}`
+    : isInbox ? "" : `${iconButton("edit", "Rename")}${iconButton("move", "Move", "optional-action")}${iconButton("trash", "Move to Trash", "danger")}`;
+  const location = isInbox ? "inbox" : folder.id;
+  return `<article class="browser-row" data-folder-id="${folder.id || "inbox"}">
+    <div class="file-name">${isInbox ? icons.inbox : icons.folder}${trashMode ? `<span class="file-name-text">${escapeHtml(folder.name)}</span>` : `<button class="folder-open" data-open="${location}">${escapeHtml(folder.name)}</button>`}</div>
+    <span class="row-meta">${isInbox && folder.count != null ? folder.count + " files" : "Folder"}</span><span class="row-meta">${trashMode ? "Trash" : "Saved"}</span><div class="row-actions">${actions}</div>
+  </article>`;
+}
+
+function bindBrowserActions() {
+  $("browserList").querySelectorAll("[data-open]").forEach((button) => button.onclick = () => navigateFiles(button.dataset.open));
+  $("browserList").querySelectorAll("[data-file-id]").forEach((row) => {
+    const id = row.dataset.fileId;
+    const file = (fileState.result?.files || []).find((item) => item.id === id);
+    row.querySelector("input").onchange = (event) => { event.target.checked ? fileState.selected.add(id) : fileState.selected.delete(id); renderBrowser(); };
+    const buttons = row.querySelectorAll(".row-actions button");
+    if (fileState.activeView === "trash") {
+      buttons[0].onclick = () => bulkFiles("restore", [id]);
+      buttons[1].onclick = () => confirmAction("Delete file?", "This permanently removes the file.", () => bulkFiles("delete_permanently", [id]), "Delete");
+    } else {
+      buttons[0].onclick = () => downloadFile(file);
+      buttons[1].onclick = () => bulkFiles(file.pinned ? "unpin" : "pin", [id]);
+      buttons[2].onclick = () => editFile(file);
+      buttons[3].onclick = () => confirmAction("Move to Trash?", file.filename, () => bulkFiles("trash", [id]), "Move");
+    }
+  });
+  $("browserList").querySelectorAll("[data-folder-id]").forEach((row) => {
+    const id = row.dataset.folderId;
+    if (id === "inbox") return;
+    const folder = (fileState.result?.folders || []).find((item) => item.id === id);
+    const buttons = row.querySelectorAll(".row-actions button");
+    if (fileState.activeView === "trash") {
+      buttons[0].onclick = () => folderAction(folder, "restore");
+      buttons[1].onclick = () => confirmAction("Delete folder?", "This permanently removes every file and subfolder inside it.", () => deleteFolder(folder), "Delete");
+    } else {
+      buttons[0].onclick = () => editFolder(folder);
+      buttons[1].onclick = () => moveFolder(folder);
+      buttons[2].onclick = () => confirmAction("Move folder to Trash?", "Every file and subfolder inside it moves with it.", () => folderAction(folder, "trash"), "Move");
+    }
   });
 }
-async function ensureHistory(name) {
-  const state = historyState[name];
-  if (state.items && !isStale(name)) {
-    if (name === "clipboard") renderClipboardHistory();
-    if (name === "files") renderFilesHistory();
-    return;
-  }
-  if (name === "clipboard") await loadClipboardHistory({ silent: Boolean(state.items) });
-  if (name === "files") await loadFilesHistory({ silent: Boolean(state.items) });
+
+function renderBrowser() {
+  const list = $("browserList");
+  if (fileState.loading && !fileState.result) { list.innerHTML = skeletonRows(); return; }
+  const result = fileState.result || { folders: [], files: [] };
+  const trashMode = fileState.activeView === "trash";
+  let folders = result.folders || [];
+  if (fileState.location === "root" && fileState.activeView === "browse") folders = [{ id: null, name: "Inbox", count: result.inbox_count, inbox: true }, ...folders];
+  const rows = [
+    ...folders.map((folder) => folderRow(folder, trashMode, folder.inbox)),
+    ...(result.files || []).map((file) => fileRow(file, trashMode))
+  ];
+  list.innerHTML = rows.length ? rows.join("") : emptyState(trashMode ? "trash" : "folder", trashMode ? "Trash is empty" : "Nothing here", trashMode ? "Deleted items stay for 7 days." : "Upload a file or create a folder.");
+  bindBrowserActions();
+  renderSelectionBar();
 }
-async function loadClipboardHistory(options = {}) {
-  const state = historyState.clipboard;
-  if (state.loading && !options.force) return;
-  state.loading = true;
-  state.error = "";
-  if (!options.silent) renderClipboardHistory();
-  try {
-    const data = await apiJson("/api/clipboard/history?limit=50");
-    state.items = data.items || [];
-    state.loadedAt = Date.now();
-  } catch (err) {
-    state.error = err.message;
-    status("Clipboard history failed: " + err.message);
-  } finally {
-    state.loading = false;
-    renderClipboardHistory();
+
+function renderSelectionBar() {
+  const bar = $("selectionBar");
+  const count = fileState.selected.size;
+  bar.classList.toggle("hidden", !count);
+  if (!count) return;
+  if (fileState.activeView === "trash") {
+    bar.innerHTML = `<strong>${count} selected</strong><button class="tertiary" data-action="restore">Restore</button><button class="danger tertiary" data-action="delete_permanently">Delete</button><button class="tertiary" data-action="clear">Clear</button>`;
+  } else {
+    bar.innerHTML = `<strong>${count} selected</strong><button class="tertiary" data-action="move">Move</button><button class="tertiary" data-action="pin">Pin</button><button class="tertiary" data-action="unpin">Unpin</button><button class="danger tertiary" data-action="trash">Trash</button><button class="tertiary" data-action="clear">Clear</button>`;
   }
+  bar.querySelectorAll("[data-action]").forEach((button) => button.onclick = () => {
+    const action = button.dataset.action;
+    if (action === "clear") { fileState.selected.clear(); return renderBrowser(); }
+    if (action === "move") return moveFiles([...fileState.selected]);
+    if (action === "trash" || action === "delete_permanently") return confirmAction(action === "trash" ? "Move selected files?" : "Delete selected files?", `${count} files selected.`, () => bulkFiles(action, [...fileState.selected]), action === "trash" ? "Move" : "Delete");
+    bulkFiles(action, [...fileState.selected]);
+  });
 }
-async function loadFilesHistory(options = {}) {
-  const state = historyState.files;
-  if (state.loading && !options.force) return;
-  state.loading = true;
-  state.error = "";
-  if (!options.silent) renderFilesHistory();
-  try {
-    const data = await apiJson("/api/files/history?limit=50");
-    state.items = data.items || [];
-    state.loadedAt = Date.now();
-  } catch (err) {
-    state.error = err.message;
-    status("Files history failed: " + err.message);
-  } finally {
-    state.loading = false;
-    renderFilesHistory();
-  }
+
+async function loadFolderTree(force = false) {
+  if (!force && fileState.folders.length) return;
+  const data = await apiJson("/api/file-folders/tree");
+  fileState.folders = data.folders || [];
+  renderFolderTree();
 }
-document.getElementById("pairBtn").onclick = async () => {
+
+async function loadStorage() {
   try {
-    await claimPairing(pairCodeInput.value.trim(), "iPhone", "ios");
-    status("iPhone paired.");
-  } catch (err) {
-    status("Pairing failed: " + err.message);
+    const data = await apiJson("/api/files/storage");
+    fileState.storage = data;
+    const ratio = Math.max(0, Math.min(1, Number(data.usage_ratio || 0)));
+    $("storageFill").style.width = (ratio * 100).toFixed(2) + "%";
+    $("storageFill").className = "storage-fill" + (ratio >= .85 ? " danger" : ratio >= .7 ? " warn" : "");
+    $("storageText").textContent = `${formatSize(data.used_bytes)} / ${formatSize(data.quota_bytes)}`;
+    if (ratio >= .95) setStatus("Storage is almost full.");
+  } catch {}
+}
+
+async function loadFileManager(force = false) {
+  try {
+    await loadFolderTree(force);
+    await navigateFiles(fileState.location, force);
+    loadStorage();
+  } catch (error) { setStatus("Files: " + error.message); }
+}
+
+async function navigateFiles(location, force = false) {
+  fileState.location = location || "root";
+  fileState.activeView = location === "trash" ? "trash" : "browse";
+  fileState.search = "";
+  $("fileSearch").value = "";
+  fileState.selected.clear();
+  renderFolderTree(); renderBreadcrumb();
+  const cacheKey = `${fileState.activeView}:${fileState.location}:${fileState.sort}`;
+  const cached = fileState.cache.get(cacheKey);
+  if (!force && cached && Date.now() - cached.loadedAt < CACHE_MS) {
+    fileState.result = cached.data; fileState.loading = false; renderBrowser(); return;
   }
-};
-document.getElementById("pasteBtn").onclick = async () => {
-  try { content.value = await navigator.clipboard.readText(); status("Pasted from iPhone clipboard."); }
-  catch { status("Paste blocked by iOS. Paste manually into the text box."); }
-};
-document.getElementById("copyBtn").onclick = async () => {
-  try { await navigator.clipboard.writeText(content.value); status("Copied to iPhone clipboard."); }
-  catch { status("Copy blocked by iOS. Select text manually."); }
-};
-document.getElementById("pushBtn").onclick = async () => {
+  fileState.loading = true;
+  if (!cached) { fileState.result = null; renderBrowser(); }
   try {
-    const response = await fetch(API_BASE + "/api/clipboard/push", {
-      method: "POST",
-      headers: headers({ "Content-Type": "application/json" }),
-      body: JSON.stringify({ content: content.value, source: "ios-pwa", device_id: deviceId })
+    const path = fileState.activeView === "trash" ? "/api/files/trash" : `/api/files/browse?folder_id=${encodeURIComponent(fileState.location)}&sort=${encodeURIComponent(fileState.sort)}&limit=100`;
+    const data = await apiJson(path);
+    fileState.result = data;
+    fileState.loadedAt = Date.now();
+    fileState.cache.set(cacheKey, { data, loadedAt: Date.now() });
+    renderBrowser();
+  } catch (error) { setStatus(error.message); }
+  finally { fileState.loading = false; }
+}
+
+let searchTimer = null;
+async function searchFiles(query) {
+  clearTimeout(searchTimer);
+  const q = query.trim();
+  if (!q) return navigateFiles(fileState.location, true);
+  searchTimer = setTimeout(async () => {
+    fileState.activeView = "search"; fileState.selected.clear(); renderBreadcrumb();
+    fileState.loading = true; fileState.result = null; renderBrowser();
+    try { fileState.result = await apiJson(`/api/files/search?q=${encodeURIComponent(q)}`); renderBrowser(); }
+    catch (error) { setStatus(error.message); }
+    finally { fileState.loading = false; }
+  }, 260);
+}
+
+function folderOptions(includeInbox = true, exclude = new Set()) {
+  const options = [];
+  if (includeInbox) options.push({ value: "inbox", label: "Inbox" });
+  options.push({ value: "root", label: "CloudBridge" });
+  function walk(parentId = null, depth = 0) {
+    folderChildren(parentId).forEach((folder) => {
+      if (!exclude.has(folder.id)) options.push({ value: folder.id, label: `${"  ".repeat(depth)}${folder.name}` });
+      walk(folder.id, depth + 1);
     });
-    if (!response.ok) throw new Error(await response.text());
-    const data = await response.json();
-    await notifyRealtime("clipboard", data.item || {});
-    historyState.clipboard.loadedAt = 0;
-    status("Sent.");
-  } catch (err) {
-    status("Push failed: " + err.message);
   }
-};
-document.getElementById("pullBtn").onclick = async () => {
+  walk();
+  return options;
+}
+
+function openEditor({ title, label = "Name", value = "", options = null, saveText = "Save", onSubmit }) {
+  $("editorTitle").textContent = title;
+  $("editorLabel").textContent = label;
+  $("editorSave").textContent = saveText;
+  $("editorInput").classList.toggle("hidden", Boolean(options));
+  $("editorSelect").classList.toggle("hidden", !options);
+  if (options) $("editorSelect").innerHTML = options.map((item) => `<option value="${item.value}">${escapeHtml(item.label)}</option>`).join("");
+  else $("editorInput").value = value;
+  editorSubmit = onSubmit;
+  $("editorDialog").showModal();
+  setTimeout(() => (options ? $("editorSelect") : $("editorInput")).focus(), 20);
+}
+
+function confirmAction(title, copy, onAccept, acceptText = "Delete") {
+  $("confirmTitle").textContent = title; $("confirmCopy").textContent = copy; $("confirmAccept").textContent = acceptText;
+  confirmSubmit = onAccept; $("confirmDialog").showModal();
+}
+
+async function createFolder() {
+  const parentId = fileState.location !== "root" && fileState.location !== "inbox" && fileState.location !== "trash" ? fileState.location : null;
+  openEditor({ title: "New folder", onSubmit: async (name) => {
+    await apiJson("/api/file-folders", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, parent_id: parentId }) });
+    await refreshFiles("Folder created.");
+  }});
+}
+
+function editFolder(folder) {
+  openEditor({ title: "Rename folder", value: folder.name, onSubmit: async (name) => {
+    await apiJson(`/api/file-folders/${folder.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name }) });
+    await refreshFiles("Folder renamed.");
+  }});
+}
+
+function moveFolder(folder) {
+  const excluded = folderDescendantIds(folder.id);
+  const options = folderOptions(false, excluded);
+  openEditor({ title: "Move folder", label: "Destination", options, saveText: "Move", onSubmit: async (value) => {
+    await apiJson(`/api/file-folders/${folder.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ parent_id: value === "root" ? null : value }) });
+    await refreshFiles("Folder moved.");
+  }});
+}
+
+async function folderAction(folder, action) {
   try {
-    const response = await fetch(API_BASE + "/api/clipboard/latest?device_id=" + encodeURIComponent(deviceId), { headers: headers() });
-    if (!response.ok) throw new Error(await response.text());
-    const data = await response.json();
-    if (!data.has_update) { status("No new clipboard from PC."); return; }
-    content.value = data.item.content;
-    try { await navigator.clipboard.writeText(data.item.content); } catch {}
-    historyState.clipboard.loadedAt = 0;
-    status("Pulled.");
-  } catch (err) {
-    status("Pull failed: " + err.message);
-  }
-};
-document.getElementById("fileBtn").onclick = async () => {
+    await apiJson(`/api/file-folders/${folder.id}/${action}`, { method: "POST" });
+    await refreshFiles(action === "restore" ? "Folder restored." : "Folder moved to Trash.");
+  } catch (error) { setStatus(error.message); }
+}
+
+async function deleteFolder(folder) {
+  try { await apiJson(`/api/file-folders/${folder.id}`, { method: "DELETE" }); await refreshFiles("Folder deleted."); }
+  catch (error) { setStatus(error.message); }
+}
+
+function editFile(file) {
+  openEditor({ title: "Rename file", value: file.filename, onSubmit: async (filename) => {
+    await apiJson(`/api/files/${file.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ filename }) });
+    await refreshFiles("File renamed.");
+  }});
+}
+
+function moveFiles(ids) {
+  openEditor({ title: "Move files", label: "Destination", options: folderOptions(true), saveText: "Move", onSubmit: async (folderId) => {
+    await bulkFiles("move", ids, folderId);
+  }});
+}
+
+async function bulkFiles(action, ids, folderId = null) {
   try {
-    const input = document.getElementById("file");
-    if (!input.files.length) throw new Error("Choose a file first.");
-    const form = new FormData();
-    form.append("file", input.files[0]);
-    form.append("source", "ios-pwa");
-    form.append("device_id", deviceId);
-    const response = await fetch(API_BASE + "/api/files/upload", { method: "POST", headers: headers(), body: form });
-    if (!response.ok) throw new Error(await response.text());
-    const data = await response.json();
-    await notifyRealtime("file", data.item || {});
-    await loadFilesHistory({ force: true, silent: true });
-    status("File sent.");
-  } catch (err) {
-    status("File send failed: " + err.message);
-  }
+    await apiJson("/api/files/bulk", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, ids, folder_id: folderId }) });
+    fileState.selected.clear();
+    await refreshFiles({ move: "Files moved.", pin: "Files pinned.", unpin: "Files unpinned.", trash: "Files moved to Trash.", restore: "Files restored.", delete_permanently: "Files deleted." }[action] || "Updated.");
+  } catch (error) { setStatus(error.message); }
+}
+
+async function downloadFile(file) {
+  try {
+    const response = await fetch(API_BASE + `/api/files/${encodeURIComponent(file.id)}/download`, { headers: authHeaders() });
+    if (!response.ok) throw new Error((await response.json()).detail || "Download failed");
+    const blob = await response.blob(); const url = URL.createObjectURL(blob); const link = document.createElement("a");
+    link.href = url; link.download = file.filename || "cloudbridge-file"; document.body.appendChild(link); link.click(); link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 30000); setStatus("Download started.");
+  } catch (error) { setStatus(error.message); }
+}
+
+async function uploadManagerFile(file) {
+  if (!file) return;
+  const form = new FormData(); form.append("file", file); form.append("source", "web-manager"); form.append("device_id", deviceId);
+  if (fileState.location !== "root" && fileState.location !== "inbox" && fileState.location !== "trash") form.append("folder_id", fileState.location);
+  try {
+    setStatus("Uploading…");
+    const response = await fetch(API_BASE + "/api/files/upload", { method: "POST", headers: authHeaders(), body: form });
+    if (!response.ok) throw new Error((await response.json()).detail || "Upload failed");
+    const data = await response.json(); await notifyRealtime("file", { id: data.item?.id, filename: data.item?.filename });
+    await refreshFiles("Uploaded.");
+  } catch (error) { setStatus(error.message); }
+}
+
+async function refreshFiles(message = "Refreshed.") {
+  fileState.cache.clear();
+  await loadFolderTree(true);
+  await navigateFiles(fileState.location, true);
+  loadStorage(); notifyRealtime("manager", { entity: "files" }); setStatus(message);
+}
+
+$("refreshClipboardBtn").innerHTML = icons.refresh;
+$("newFolderBtn").innerHTML = icons.folderPlus;
+$("uploadFolderBtn").innerHTML = icons.upload;
+$("refreshFilesBtn").innerHTML = icons.refresh;
+tabButtons.sync.onclick = () => showView("sync"); tabButtons.clipboard.onclick = () => showView("clipboard"); tabButtons.files.onclick = () => showView("files");
+$("refreshClipboardBtn").onclick = () => loadClipboard(true);
+$("refreshFilesBtn").onclick = () => refreshFiles();
+$("newFolderBtn").onclick = createFolder;
+$("uploadFolderBtn").onclick = () => $("managerFileInput").click();
+$("managerFileInput").onchange = (event) => { uploadManagerFile(event.target.files[0]); event.target.value = ""; };
+$("fileSort").onchange = (event) => { fileState.sort = event.target.value; navigateFiles(fileState.location, true); };
+$("fileSearch").oninput = (event) => searchFiles(event.target.value);
+$("clipboardMobileSwitch").querySelectorAll("button").forEach((button) => button.onclick = () => {
+  $("clipboardBoard").dataset.mobileView = button.dataset.clipView;
+  $("clipboardMobileSwitch").querySelectorAll("button").forEach((item) => item.classList.toggle("active", item === button));
+});
+
+$("editorCancel").onclick = () => $("editorDialog").close();
+$("editorForm").onsubmit = async (event) => {
+  event.preventDefault();
+  const value = $("editorSelect").classList.contains("hidden") ? $("editorInput").value.trim() : $("editorSelect").value;
+  if (!value) return setStatus("A value is required.");
+  $("editorSave").disabled = true;
+  try { await editorSubmit(value); $("editorDialog").close(); }
+  catch (error) { setStatus(error.message); }
+  finally { $("editorSave").disabled = false; }
 };
-document.getElementById("resetBtn").onclick = () => {
-  const confirmed = confirm("Forget pairing on this iPhone? You will need to pair this device again from Windows before using CloudBridge.");
-  if (!confirmed) {
-    status("Forget pairing cancelled.");
-    return;
-  }
-  localStorage.removeItem("cloudbridge_token");
-  setPaired(false);
-  status("Pairing removed from this iPhone.");
+$("confirmCancel").onclick = () => $("confirmDialog").close();
+$("confirmAccept").onclick = async () => {
+  $("confirmAccept").disabled = true;
+  try { await confirmSubmit(); $("confirmDialog").close(); }
+  finally { $("confirmAccept").disabled = false; }
 };
-tabButtons.sync.onclick = () => showView("sync");
-tabButtons.clipboard.onclick = () => showView("clipboard");
-tabButtons.files.onclick = () => showView("files");
-document.getElementById("refreshClipboardBtn").onclick = () => loadClipboardHistory({ force: true });
-document.getElementById("refreshFilesBtn").onclick = () => loadFilesHistory({ force: true });
+
+$("pairBtn").onclick = async () => {
+  try { await claimPairing(pairCodeInput.value.trim(), "iPhone", "ios"); setStatus("Paired."); }
+  catch (error) { setStatus(error.message); }
+};
+$("pasteBtn").onclick = async () => { try { $("content").value = await navigator.clipboard.readText(); setStatus("Pasted."); } catch { setStatus("Paste was blocked."); } };
+$("copyBtn").onclick = async () => { try { await navigator.clipboard.writeText($("content").value); setStatus("Copied."); } catch { setStatus("Copy was blocked."); } };
+$("pushBtn").onclick = async () => {
+  try {
+    const data = await apiJson("/api/clipboard/push", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ content: $("content").value, source: "ios-pwa", device_id: deviceId }) });
+    notifyRealtime("clipboard", data.item || {}); clipboardState.loadedAt = 0; setStatus("Sent.");
+  } catch (error) { setStatus(error.message); }
+};
+$("pullBtn").onclick = async () => {
+  try {
+    const data = await apiJson("/api/clipboard/latest?device_id=" + encodeURIComponent(deviceId));
+    if (!data.has_update) return setStatus("No new text.");
+    $("content").value = data.item.content; try { await navigator.clipboard.writeText(data.item.content); } catch {}
+    setStatus("Pulled.");
+  } catch (error) { setStatus(error.message); }
+};
+$("fileBtn").onclick = async () => {
+  const file = $("file").files[0]; if (!file) return setStatus("Choose a file.");
+  const form = new FormData(); form.append("file", file); form.append("source", "ios-pwa"); form.append("device_id", deviceId);
+  try {
+    setStatus("Uploading…"); const response = await fetch(API_BASE + "/api/files/upload", { method: "POST", headers: authHeaders(), body: form });
+    if (!response.ok) throw new Error((await response.json()).detail || "Upload failed");
+    const data = await response.json(); notifyRealtime("file", data.item || {}); fileState.cache.clear(); setStatus("File sent.");
+  } catch (error) { setStatus(error.message); }
+};
+$("resetBtn").onclick = () => confirmAction("Forget pairing?", "This browser must be paired again from Windows.", () => {
+  localStorage.removeItem("cloudbridge_token"); setPaired(false); setStatus("Pairing removed.");
+}, "Forget");
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState !== "visible") return;
+  if (activeTab === "files" && Date.now() - fileState.loadedAt > CACHE_MS) refreshFiles();
+  if (activeTab === "clipboard" && Date.now() - clipboardState.loadedAt > CACHE_MS) loadClipboard(true);
+});
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js").catch(() => {});
-autoClaimIfRequested().then((claimed) => {
-  if (!claimed) return checkPairing();
-}).catch(() => setPaired(false));
+autoClaimIfRequested().then((claimed) => { if (!claimed) checkPairing(); }).catch(() => setPaired(false));
 </script>
 </body>
 </html>

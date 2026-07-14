@@ -50,10 +50,22 @@ POST /api/clipboard/{id}/unpin
 POST /api/files/upload
 GET  /api/files/pending
 GET  /api/files/history
+GET  /api/files/browse
+GET  /api/files/search
+GET  /api/files/trash
+GET  /api/files/storage
+POST /api/files/bulk
+PATCH /api/files/{id}
 GET  /api/files/{id}/download
 POST /api/files/{id}/ack
 POST /api/files/{id}/pin
 POST /api/files/{id}/unpin
+GET  /api/file-folders/tree
+POST /api/file-folders
+PATCH /api/file-folders/{id}
+POST /api/file-folders/{id}/trash
+POST /api/file-folders/{id}/restore
+DELETE /api/file-folders/{id}
 POST /api/cleanup
 ```
 
@@ -111,12 +123,14 @@ Menu tray `Open CloudBridge Manager` membuat pairing code singkat dan otomatis m
 - Setelah Windows mengirim `ack`, file ditandai `downloaded`, tetapi object storage tidak langsung dihapus.
 - Cleanup otomatis berjalan oportunistik maksimal 1x per 24 jam setelah operasi tulis penting.
 - Clipboard unpinned disimpan 7 hari.
-- File unpinned dihapus cleanup jika sudah `downloaded` lebih dari 24 jam, atau expired lebih dari 24 jam.
-- TTL file default adalah 24 jam, tetapi file pinned tetap bisa disimpan sampai user melakukan unpin.
+- File di `Inbox` tetap bersifat transfer sementara dan dibersihkan setelah masa tenggang 24 jam jika tidak dipin.
+- File yang dipindahkan ke folder menjadi koleksi tersimpan dan tidak mengikuti TTL Inbox.
+- Item di `Trash` dibersihkan permanen setelah 7 hari. Penghapusan permanen selalu menghapus object Storage sebelum row database.
+- File pinned tetap disimpan sampai user melakukan unpin atau menghapusnya sendiri.
 
 ## CloudBridge Manager
 
-PWA iPhone memiliki tab `Clipboard History` dan `Files History` untuk melihat item terbaru dan melakukan `Pin` / `Unpin`.
+PWA memiliki workspace clipboard dan file yang sama di iPhone maupun PC. Clipboard dibagi menjadi `Pinned` dan `Recent`. File manager menyediakan Inbox, folder bertingkat, breadcrumb, pencarian, sort, multi-select, move, rename, pin, Trash, restore, dan hapus permanen.
 
 Di Windows tray, menu `Open CloudBridge Manager` membuka PWA manager:
 
