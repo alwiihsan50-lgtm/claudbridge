@@ -1,0 +1,7 @@
+requests==2.32.4
+pyperclip==1.9.0
+python-dotenv==1.1.1
+winotify==1.1.0
+pystray==0.19.5
+pillow==12.0.0
+qrcode==8.2
