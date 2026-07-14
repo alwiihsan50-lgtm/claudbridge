@@ -130,6 +130,7 @@
     }
     .content-pane { min-height: 0; padding: 12px 12px 10px; overflow: auto; overscroll-behavior: contain; }
     .sync-pane { display: grid; grid-template-rows: auto auto auto auto auto auto auto; overflow: hidden; }
+    .history-pane { display: grid; grid-template-rows: auto minmax(0, 1fr); overflow: hidden; }
     .pair-card { padding: 12px; border-top: 1px solid var(--line); }
     .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .tabs {
@@ -166,6 +167,7 @@
     .toolbar .copy { min-width: 0; }
     .toolbar p { margin-top: 4px; font-size: 12px; }
     .list { display: grid; gap: 10px; min-height: 80px; }
+    .history-list { min-height: 0; overflow: auto; padding-right: 2px; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
     .list-item {
       border: 1px solid var(--line);
       border-radius: var(--radius);
@@ -280,7 +282,7 @@
         </div>
       </div>
 
-      <div id="clipboardView" class="content-pane hidden">
+      <div id="clipboardView" class="content-pane history-pane hidden">
         <div class="toolbar">
           <div class="copy">
             <h2>Clipboard</h2>
@@ -288,10 +290,10 @@
           </div>
           <button id="refreshClipboardBtn" class="tertiary">Refresh</button>
         </div>
-        <div id="clipboardList" class="list"></div>
+        <div id="clipboardList" class="list history-list"></div>
       </div>
 
-      <div id="filesView" class="content-pane hidden">
+      <div id="filesView" class="content-pane history-pane hidden">
         <div class="toolbar">
           <div class="copy">
             <h2>Files</h2>
@@ -299,7 +301,7 @@
           </div>
           <button id="refreshFilesBtn" class="tertiary">Refresh</button>
         </div>
-        <div id="filesList" class="list"></div>
+        <div id="filesList" class="list history-list"></div>
       </div>
     </section>
   </div>
