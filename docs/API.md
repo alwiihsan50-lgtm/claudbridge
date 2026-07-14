@@ -1,5 +1,11 @@
 # API Contract
 
+Base URL:
+
+```text
+https://ajlkfzgpheegmwsnspxw.supabase.co/functions/v1/cloudbridge
+```
+
 Protected endpoints require either the admin token or a paired device token:
 
 ```http

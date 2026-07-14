@@ -26,14 +26,10 @@ https://alwiihsan50-lgtm.github.io/cloud-clipboard-file-bridge/app/
 
 Backend utama ada di project Supabase `riwayat smart relay` dengan ref `ajlkfzgpheegmwsnspxw`.
 
-Endpoint yang tersedia:
+Endpoint API yang tersedia di Supabase:
 
 ```text
 GET  /health
-GET  /app
-GET  /manifest.json
-GET  /icon.svg
-GET  /sw.js
 GET  /api/me
 POST /api/pairing/create
 POST /api/pairing/claim
@@ -45,7 +41,7 @@ GET  /api/files/{id}/download
 POST /api/files/{id}/ack
 ```
 
-Endpoint publik hanya `/health`, `/app`, asset PWA, dan `/api/pairing/claim`. Endpoint lain memakai:
+Endpoint publik hanya `/health` dan `/api/pairing/claim`. Endpoint lain memakai:
 
 ```http
 Authorization: Bearer <token>
@@ -93,6 +89,10 @@ Polling default Windows Agent adalah `5000ms`, supaya lebih aman untuk Supabase 
 - File masuk ke bucket private `cloudbridge-files`.
 - Setelah Windows mengirim `ack`, file ditandai `downloaded` dan object storage dihapus.
 - TTL file default adalah 24 jam.
+
+## Catatan PWA
+
+Supabase Edge Functions tidak dipakai untuk halaman PWA karena response HTML dari Edge Function dikirim sebagai `text/plain`. Karena itu app iPhone disajikan dari GitHub Pages, sementara semua operasi data tetap lewat Supabase API.
 
 ## Legacy Lokal
 
