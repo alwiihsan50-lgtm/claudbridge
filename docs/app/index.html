@@ -323,9 +323,15 @@ const SUPABASE_BASE = "https://ajlkfzgpheegmwsnspxw.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_c4VLFI_5vVD2FokNBuX1iw_44NApC27";
 const REALTIME_TOPIC = "cloudbridge";
 const HISTORY_STALE_MS = 60000;
+const params = new URLSearchParams(location.search);
+const hashParams = new URLSearchParams(location.hash.startsWith("#") ? location.hash.slice(1) : "");
+if (hashParams.get("manager_token")) {
+  localStorage.setItem("cloudbridge_token", hashParams.get("manager_token"));
+  if (hashParams.get("device_id")) localStorage.setItem("cloudbridge_device_id", hashParams.get("device_id"));
+  history.replaceState(null, "", location.pathname + location.search);
+}
 const deviceId = localStorage.getItem("cloudbridge_device_id") || ("ios-" + Math.random().toString(36).slice(2));
 localStorage.setItem("cloudbridge_device_id", deviceId);
-const params = new URLSearchParams(location.search);
 const pairCodeInput = document.getElementById("pairCode");
 if (params.get("code")) pairCodeInput.value = params.get("code");
 const statusBox = document.getElementById("status");

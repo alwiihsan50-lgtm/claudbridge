@@ -6,6 +6,7 @@ import threading
 import time
 from pathlib import Path
 from tkinter import Tk, filedialog
+from urllib.parse import quote
 
 import pyperclip
 import pystray
@@ -113,7 +114,11 @@ def copy_cloud_url() -> None:
 
 
 def open_manager() -> None:
-    os.startfile(APP_URL)
+    manager_url = (
+        f"{APP_URL}/#manager_token={quote(agent.TOKEN, safe='')}"
+        f"&device_id={quote(agent.DEVICE_ID, safe='')}"
+    )
+    os.startfile(manager_url)
 
 
 def choose_file() -> str:
