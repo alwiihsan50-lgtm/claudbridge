@@ -276,7 +276,7 @@ Response:
 
 ## `GET /api/files/{id}/download`
 
-Downloads the file binary. The iPhone PWA uses this endpoint for files uploaded from Windows.
+Returns the file binary with inline content disposition. The iPhone PWA uses the authenticated response to open files uploaded from Windows, while the Windows Agent can still save the same response to disk.
 
 ## `POST /api/files/{id}/ack`
 

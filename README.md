@@ -95,7 +95,7 @@ D:\Cloud Bridge
 
 Windows Agent membuka koneksi Supabase Realtime supaya update dari iPhone terasa instan. Polling cloud fallback default adalah `300000ms` atau 5 menit.
 
-Untuk mengirim file dari Windows ke iPhone, gunakan menu tray `Send file to iPhone`, lalu buka tab `Files` di PWA iPhone dan tekan `Download`.
+Untuk mengirim file dari Windows ke iPhone, gunakan menu tray `Send file to iPhone`, lalu buka tab `Files` di PWA iPhone dan tekan `Open`.
 
 Menu tray `Open CloudBridge Manager` membuat pairing code singkat dan otomatis mendaftarkan browser PC sebagai device `windows-web`. Admin token tidak dikirim ke browser.
 
@@ -137,7 +137,7 @@ Tambahkan kedua shortcut ke Home Screen dari aplikasi Shortcuts. Membuat key bar
 
 ## CloudBridge Manager
 
-PWA memiliki workspace clipboard dan file yang sama di iPhone maupun PC. Clipboard dibagi menjadi `Pinned` dan `Recent`; Files dibagi menjadi `Pinned` dan `Temporary`. File hanya memiliki aksi Download, Pin, dan Unpin. Unpin memakai konfirmasi karena file dapat masuk cleanup otomatis.
+PWA memiliki workspace clipboard dan file yang sama di iPhone maupun PC. Clipboard dibagi menjadi `Pinned` dan `Recent`; Files dibagi menjadi `Pinned` dan `Temporary`. File hanya memiliki aksi Open, Pin, dan Unpin. Unpin memakai konfirmasi karena file dapat masuk cleanup otomatis.
 
 PWA menampilkan UI langsung dari token lokal dan memvalidasi pairing di background. Daftar Files dimuat 50 item per halaman dengan cursor pagination tanpa cache workspace berat.
 

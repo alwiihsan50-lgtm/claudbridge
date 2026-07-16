@@ -713,7 +713,7 @@ Deno.serve(async (req: Request) => {
         headers: {
           ...corsHeaders,
           "Content-Type": record.mime_type,
-          "Content-Disposition": `attachment; filename="${
+          "Content-Disposition": `inline; filename="${
             String(record.filename).replaceAll('"', "")
           }"`,
         },

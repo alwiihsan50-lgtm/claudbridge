@@ -50,12 +50,20 @@ def test_private_storage_path_is_removed_from_public_file_records():
 
 
 def test_pwa_contains_lightweight_pinned_and_temporary_file_lists():
-    for label in ("Pinned", "Temporary", "Download", "Unpin file?"):
+    for label in ("Pinned", "Temporary", "Open", "Unpin file?"):
         assert label in PWA
     for removed in ("Inbox", "Trash", "New folder", "Delete permanently", "Search files"):
         assert removed not in PWA
     assert "localStorage" in PWA
     assert 'confirmAction("Forget pairing?"' in PWA
+
+
+def test_web_opens_files_inline_without_forcing_download():
+    assert 'iconButton("open", "Open")' in PWA
+    assert "async function openFile(file)" in PWA
+    assert 'link.target = "_blank"' in PWA
+    assert "link.download" not in PWA
+    assert '"Content-Disposition": `inline;' in FUNCTION
 
 
 def test_quick_actions_are_scoped_and_revocable():

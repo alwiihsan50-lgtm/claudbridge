@@ -361,7 +361,7 @@ const icons = {
   file: '<svg class="type-icon" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"></path><path d="M14 3v5h5"></path></svg>',
   copy: '<svg viewBox="0 0 24 24"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"></path></svg>',
   pin: '<svg viewBox="0 0 24 24"><path d="m14 4 6 6-3 1-4 4-1 5-2-2-4 4-1-1 4-4-2-2 5-1 4-4z"></path></svg>',
-  download: '<svg viewBox="0 0 24 24"><path d="M12 3v13m0 0 5-5m-5 5-5-5"></path><path d="M4 20h16"></path></svg>',
+  open: '<svg viewBox="0 0 24 24"><path d="M14 4h6v6"></path><path d="m20 4-9 9"></path><path d="M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6"></path></svg>',
   bolt: '<svg viewBox="0 0 24 24"><path d="m13 2-8 12h7l-1 8 8-12h-7z"></path></svg>',
 };
 
@@ -553,13 +553,13 @@ function renderFileList(group) {
   }
   list.innerHTML = items.map((file) => `<article class="file-entry" data-file-id="${file.id}">
     <div class="file-main">${icons.file}<div class="file-details"><div class="file-title">${escapeHtml(file.filename)}</div><div class="file-meta">${escapeHtml(fileMeta(file, pinned))}</div></div>
-      <div class="file-actions">${iconButton("download", "Download")}${iconButton("pin", pinned ? "Unpin" : "Pin")}</div>
+      <div class="file-actions">${iconButton("open", "Open")}${iconButton("pin", pinned ? "Unpin" : "Pin")}</div>
     </div>
   </article>`).join("");
   list.querySelectorAll("[data-file-id]").forEach((row) => {
     const file = items.find((item) => item.id === row.dataset.fileId);
     const buttons = row.querySelectorAll("button");
-    buttons[0].onclick = () => downloadFile(file);
+    buttons[0].onclick = () => openFile(file);
     buttons[1].onclick = () => {
       if (!pinned) return toggleFilePin(file, false);
       confirmAction(
@@ -636,14 +636,32 @@ async function toggleFilePin(file, wasPinned) {
   } catch (error) { setStatus(error.message); }
 }
 
-async function downloadFile(file) {
+async function openFile(file) {
+  const preview = window.open("about:blank", "_blank");
+  if (preview) {
+    preview.document.title = file.filename || "CloudBridge file";
+    preview.document.body.textContent = "Opening file...";
+  }
   try {
     const response = await fetch(API_BASE + `/api/files/${encodeURIComponent(file.id)}/download`, { headers: authHeaders() });
-    if (!response.ok) throw new Error((await response.json()).detail || "Download failed");
-    const blob = await response.blob(); const url = URL.createObjectURL(blob); const link = document.createElement("a");
-    link.href = url; link.download = file.filename || "cloudbridge-file"; document.body.appendChild(link); link.click(); link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 30000); setStatus("Download started.");
-  } catch (error) { setStatus(error.message); }
+    if (!response.ok) throw new Error((await response.json()).detail || "Open failed");
+    let blob = await response.blob();
+    if (blob.type === "text/html" || blob.type === "application/xhtml+xml" || blob.type === "image/svg+xml") {
+      blob = new Blob([await blob.arrayBuffer()], { type: "text/plain;charset=utf-8" });
+    }
+    const url = URL.createObjectURL(blob);
+    if (preview) preview.location.replace(url);
+    else {
+      const link = document.createElement("a");
+      link.href = url; link.target = "_blank"; link.rel = "noopener";
+      document.body.appendChild(link); link.click(); link.remove();
+    }
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+    setStatus("File opened.");
+  } catch (error) {
+    if (preview) preview.close();
+    setStatus(error.message);
+  }
 }
 
 async function refreshFiles(message = "Refreshed.") {
