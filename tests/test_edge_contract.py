@@ -66,6 +66,16 @@ def test_web_opens_files_inline_without_forcing_download():
     assert '"Content-Disposition": `inline;' in FUNCTION
 
 
+def test_all_clipboard_and_file_items_can_be_edited():
+    assert 'req.method === "PATCH" && clipboardEditMatch' in FUNCTION
+    assert 'req.method === "PATCH" && fileRenameMatch' in FUNCTION
+    assert 'iconButton("edit", "Edit")' in PWA
+    assert 'iconButton("edit", "Rename")' in PWA
+    assert "openClipboardEditor(item)" in PWA
+    assert "openFileRenamer(file)" in PWA
+    assert "if (!pinned)" not in PWA[PWA.index("function openClipboardEditor"):PWA.index("function fileMeta")]
+
+
 def test_quick_actions_are_scoped_and_revocable():
     for route in (
         "/api/quick-actions/setup",

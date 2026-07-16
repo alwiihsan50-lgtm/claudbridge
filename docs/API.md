@@ -225,6 +225,10 @@ Response:
 
 Marks a clipboard record as pinned so automatic cleanup will not delete it.
 
+## `PATCH /api/clipboard/{id}`
+
+Updates the text content of any clipboard history item. The body is JSON with a non-empty `content` field up to 1 MB. Editing does not change pin status or make the item the latest clipboard event.
+
 ## `POST /api/clipboard/{id}/unpin`
 
 Removes the pinned status from a clipboard record.
@@ -277,6 +281,10 @@ Response:
 ## `GET /api/files/{id}/download`
 
 Returns the file binary with inline content disposition. The iPhone PWA uses the authenticated response to open files uploaded from Windows, while the Windows Agent can still save the same response to disk.
+
+## `PATCH /api/files/{id}`
+
+Renames any file record with JSON body `{ "filename": "new-name.ext" }`. The Storage object path stays internal and unchanged; pin, transfer status, and expiry are preserved.
 
 ## `POST /api/files/{id}/ack`
 

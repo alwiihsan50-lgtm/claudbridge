@@ -45,12 +45,14 @@ POST /api/pairing/claim
 POST /api/clipboard/push
 GET  /api/clipboard/latest
 GET  /api/clipboard/history
+PATCH /api/clipboard/{id}
 POST /api/clipboard/{id}/pin
 POST /api/clipboard/{id}/unpin
 POST /api/files/upload
 GET  /api/files/pending
 GET  /api/files/history
 GET  /api/files/{id}/download
+PATCH /api/files/{id}
 POST /api/files/{id}/ack
 POST /api/files/{id}/pin
 POST /api/files/{id}/unpin
@@ -137,7 +139,7 @@ Tambahkan kedua shortcut ke Home Screen dari aplikasi Shortcuts. Membuat key bar
 
 ## CloudBridge Manager
 
-PWA memiliki workspace clipboard dan file yang sama di iPhone maupun PC. Clipboard dibagi menjadi `Pinned` dan `Recent`; Files dibagi menjadi `Pinned` dan `Temporary`. File hanya memiliki aksi Open, Pin, dan Unpin. Unpin memakai konfirmasi karena file dapat masuk cleanup otomatis.
+PWA memiliki workspace clipboard dan file yang sama di iPhone maupun PC. Clipboard dibagi menjadi `Pinned` dan `Recent`; semua teks dapat diedit. Files dibagi menjadi `Pinned` dan `Temporary`; semua file dapat dibuka atau di-rename. Pin dan Unpin tetap tersedia, dengan konfirmasi saat Unpin karena item dapat masuk cleanup otomatis.
 
 PWA menampilkan UI langsung dari token lokal dan memvalidasi pairing di background. Daftar Files dimuat 50 item per halaman dengan cursor pagination tanpa cache workspace berat.
 

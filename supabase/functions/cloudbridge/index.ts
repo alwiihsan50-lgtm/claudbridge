@@ -167,10 +167,18 @@ function normalizePath(url: URL): string {
 }
 
 function safeFilename(value: string): string {
-  const cleaned = value.split(/[\\/]/).pop()?.replaceAll("\0", "").trim() ||
-    "upload.bin";
-  return cleaned.replace(/[<>:"/\\|?*\x00-\x1F]/g, "_").slice(0, 240) ||
-    "upload.bin";
+  const cleaned = value.split(/[\\/]/).pop()?.replaceAll("\0", "").trim() ??
+    "";
+  let filename = cleaned.replace(/[<>:"/\\|?*\x00-\x1F]/g, "_")
+    .replace(/[. ]+$/g, "").slice(0, 240).trim();
+  if (!filename || filename === "." || filename === "..") {
+    return "upload.bin";
+  }
+  const stem = filename.split(".")[0];
+  if (/^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i.test(stem)) {
+    filename = `_${filename}`.slice(0, 240);
+  }
+  return filename;
 }
 
 function publicFileRecord(record: JsonRecord): JsonRecord {
@@ -591,6 +599,23 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    const clipboardEditMatch = path.match(/^\/api\/clipboard\/([^/]+)$/);
+    if (req.method === "PATCH" && clipboardEditMatch) {
+      const body = await req.json();
+      if (typeof body.content !== "string" || !body.content.trim()) {
+        return json({ detail: "content must not be empty" }, 422);
+      }
+      if (new TextEncoder().encode(body.content).byteLength > QUICK_CLIPBOARD_MAX_BYTES) {
+        return json({ detail: "content exceeds 1 MB" }, 413);
+      }
+      const { data, error } = await supabase.from("cloudbridge_clipboard")
+        .update({ content: body.content }).eq("id", clipboardEditMatch[1])
+        .select("*").maybeSingle();
+      if (error) return json({ detail: error.message }, 500);
+      if (!data) return json({ detail: "Clipboard item not found" }, 404);
+      return json({ ok: true, item: data });
+    }
+
     const clipboardPinMatch = path.match(
       /^\/api\/clipboard\/([^/]+)\/(pin|unpin)$/,
     );
@@ -729,6 +754,22 @@ Deno.serve(async (req: Request) => {
       }).eq("id", fileAckMatch[1]).select("*").single();
       if (error) return json({ detail: error.message }, 500);
       await maybeCleanup();
+      return json({ ok: true, item: publicFileRecord(data) });
+    }
+
+    const fileRenameMatch = path.match(/^\/api\/files\/([^/]+)$/);
+    if (req.method === "PATCH" && fileRenameMatch) {
+      const body = await req.json();
+      if (typeof body.filename !== "string" || !body.filename.trim()) {
+        return json({ detail: "filename must not be empty" }, 422);
+      }
+      const filename = safeFilename(body.filename);
+      const { data, error } = await supabase.from("cloudbridge_files").update({
+        filename,
+        updated_at: nowIso(),
+      }).eq("id", fileRenameMatch[1]).select("*").maybeSingle();
+      if (error) return json({ detail: error.message }, 500);
+      if (!data) return json({ detail: "File not found" }, 404);
       return json({ ok: true, item: publicFileRecord(data) });
     }
 
