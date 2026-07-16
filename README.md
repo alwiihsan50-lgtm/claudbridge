@@ -128,6 +128,10 @@ PWA Manager menyediakan menu ikon petir `Quick Actions`. Pilih `Create setup key
 - `CloudBridge Pull` - satu tap mengambil teks terbaru dari device lain ke clipboard iPhone.
 - `CloudBridge` - ikon PWA utama untuk membuka manager.
 
+Untuk Push, gunakan `Get Contents of URL` dengan metode `POST`, request body
+`File`, dan pilih hasil `Get Clipboard`. Endpoint juga tetap menerima JSON lama
+dengan field `content`.
+
 Tambahkan kedua shortcut ke Home Screen dari aplikasi Shortcuts. Membuat key baru otomatis mengganti key Quick Actions lama. Gunakan `Revoke key` untuk menonaktifkan kedua shortcut tanpa memutus pairing PWA.
 
 ## Data dan Konflik

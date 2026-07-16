@@ -420,7 +420,7 @@
       <label for="quickPullUrl">Pull URL</label>
       <div class="secret-row"><input id="quickPullUrl" readonly><button class="secondary" data-copy="quickPullUrl">Copy</button></div>
       <div class="quick-grid">
-        <section class="quick-card"><h3>CloudBridge Push</h3><ol><li>Get Clipboard</li><li>Get Contents of URL: POST, JSON body <strong>content</strong> = Clipboard</li><li>Add header <strong>Authorization</strong> using the value above</li><li>Show Notification: Sent</li><li>Add to Home Screen</li></ol></section>
+        <section class="quick-card"><h3>CloudBridge Push</h3><ol><li>Get Clipboard</li><li>Get Contents of URL: POST, request body <strong>File</strong> = Clipboard</li><li>Add header <strong>Authorization</strong> using the value above</li><li>Show Notification: Sent</li><li>Add to Home Screen</li></ol></section>
         <section class="quick-card"><h3>CloudBridge Pull</h3><ol><li>Get Contents of URL: GET</li><li>Add header <strong>Authorization</strong> using the value above</li><li>If result has value, Copy to Clipboard</li><li>Show Notification: Pulled</li><li>Add to Home Screen</li></ol></section>
       </div>
     </div>

@@ -588,8 +588,21 @@ Deno.serve(async (req: Request) => {
       if (auth.access_scope !== "clipboard_quick" || !auth.device_id) {
         return json({ detail: "Quick Actions token required" }, 403);
       }
-      const body = await req.json();
-      const content = String(body.content ?? "");
+      const contentType = req.headers.get("content-type")?.toLowerCase() ?? "";
+      let content = "";
+      if (contentType.includes("application/json")) {
+        const body = await req.json();
+        content = String(body.content ?? "");
+      } else if (
+        contentType.includes("multipart/form-data") ||
+        contentType.includes("application/x-www-form-urlencoded")
+      ) {
+        const form = await req.formData();
+        content = String(form.get("content") ?? "");
+      } else {
+        // iOS Shortcuts sends its File request body as raw text.
+        content = await req.text();
+      }
       const byteLength = new TextEncoder().encode(content).byteLength;
       if (!content.length) return json({ detail: "Clipboard is empty" }, 422);
       if (byteLength > QUICK_CLIPBOARD_MAX_BYTES) {

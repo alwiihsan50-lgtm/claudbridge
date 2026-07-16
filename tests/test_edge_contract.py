@@ -91,3 +91,9 @@ def test_quick_actions_setup_is_available_in_manager():
     for label in ("Quick Actions", "CloudBridge Push", "CloudBridge Pull", "Create setup key"):
         assert label in PWA
     assert 'if (token()) setPaired(true)' in PWA
+    assert "request body <strong>File</strong> = Clipboard" in PWA
+
+
+def test_quick_push_accepts_ios_shortcuts_raw_body():
+    assert 'contentType.includes("application/json")' in FUNCTION
+    assert 'content = await req.text();' in FUNCTION
